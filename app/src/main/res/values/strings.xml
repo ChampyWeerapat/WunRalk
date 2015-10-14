@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">WunRalk</string>
+    <string name="login_title">Log in</string>
+    <string name="username_title">Username</string>
+    <string name="password_title">Password</string>
+    <string name="button_login">Log in</string>
+    <string name="register">Register</string>
 </resources>
