@@ -1,5 +1,6 @@
 package com.example.champy.wunralk;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -26,15 +27,16 @@ public class MainActivity extends AppCompatActivity {
         clickHereBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                clickHereBtn.setSelected(!clickHereBtn.isSelected());
-                if (clickHereBtn.isSelected()) {
-                    runtime.start();
-                    clickHereBtn.setBackgroundResource(R.drawable.stop);
-
-                } else {
-                    runtime.pause();
-                    clickHereBtn.setBackgroundResource(R.drawable.start);
-                }
+                startActivity(new Intent(getApplicationContext(),activity_loging.class));
+//                clickHereBtn.setSelected(!clickHereBtn.isSelected());
+//                if (clickHereBtn.isSelected()) {
+//                    runtime.start();
+//                    clickHereBtn.setBackgroundResource(R.drawable.stop);
+//
+//                } else {
+//                    runtime.pause();
+//                    clickHereBtn.setBackgroundResource(R.drawable.start);
+//                }
             }
         });
     }
