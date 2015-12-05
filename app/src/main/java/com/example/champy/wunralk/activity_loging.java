@@ -26,7 +26,7 @@ public class activity_loging extends AppCompatActivity {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 //                startActivity(new Intent(getApplicationContext(),MainActivity.class));
-                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+//                startActivity(new Intent(getApplicationContext(),MapsActivity.class));
             }
         });
     }
