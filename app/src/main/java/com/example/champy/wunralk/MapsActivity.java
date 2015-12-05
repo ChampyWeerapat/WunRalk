@@ -24,8 +24,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     LocationManager locationManager ;
     String provider;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
