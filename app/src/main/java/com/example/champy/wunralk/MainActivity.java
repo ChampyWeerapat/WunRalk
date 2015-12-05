@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,13 +19,23 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private Runtime runtime;
+    private LocationManager lm;
+    private ArrayList<LatLng> list;
+    private ArrayList<Polyline> lists;
     private int count = 0;
+    private double lastTime =0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +57,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tabHost.addTab(tabSpec);
 
         runtime = new Runtime(duration);
-
+//        Timer
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        list = new ArrayList<LatLng>();
 
         final ImageButton clickHereBtn = (ImageButton)findViewById(R.id.startstopbtn);
         clickHereBtn.setOnClickListener(new View.OnClickListener() {
@@ -74,16 +87,64 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                TextView speed = (TextView) findViewById(R.id.speed);
-                speed.setText(""+ ++count);
+                if (count == 0) {
+                    count = 1;
+                } else {
+                    double longitude = mMap.getMyLocation().getLongitude();
+                    double latitude = mMap.getMyLocation().getLatitude();
+//               LatLng sydney = new LatLng(latitude, longitude);
+//               LatLng sydney = mMap.getCameraPosition().target;
+                    LatLng sydney = new LatLng(latitude, longitude);
+//                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+                    PolylineOptions a = new PolylineOptions();
+
+                    if (list.size() == 0) {
+                        list.add(sydney);
+                        a.add(list.get(0));
+                        mMap.addPolyline(a);
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
+                    } else {
+
+                        double distance = CalculationByDistance(list.get(list.size() - 1), sydney);
+                        String textTime = runtime.getTime();
+                        String[] arr = textTime.split(":");
+                        double house = Double.parseDouble(arr[0]);
+                        double minute = Double.parseDouble(arr[1]);
+                        double second = Double.parseDouble(arr[2]);
+                        double miliSecond = Double.parseDouble(arr[3]);
+                        double time = house*60*60+minute*60+second;
+                        double speed = distance/time-lastTime;
+                        TextView tSpeed = (TextView) findViewById(R.id.speed);
+                        tSpeed.setText(""+speed);
+                        if (distance >= 5 && distance <= 100) {
+                            list.add(sydney);
+                            a.add(list.get(list.size() - 2));
+                            a.add(list.get(list.size() - 1));
+                            mMap.addPolyline(a);
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
+
+                            TextView textView = (TextView) findViewById(R.id.heart_rate);
+                            textView.setText("YES");
+
+                            lastTime = time;
+                        } else {
+                            TextView textView = (TextView) findViewById(R.id.heart_rate);
+                            textView.setText("NO");
+                            lastTime = time;
+
+                        }
+                    }
+
+
+                }
             }
         });
+
         // Add a marker in Sydney and move the camera
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 //        Location location = mMap.getMyLocation();
         Criteria criteria = new Criteria();
         String provider = lm.getBestProvider(criteria, false);
@@ -94,8 +155,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
             LatLng sydney = new LatLng(latitude, longitude);
-            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 16.0f));
+//            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,17.0f));
             Log.d("ddd", "longitude is "+longitude);
             Log.d("ddd","latitude is "+latitude);
         }
@@ -103,4 +164,37 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.d("ddd","mMap is null");
         }
     }
+
+    public double CalculationByDistance(LatLng StartP, LatLng EndP) {
+        int Radius = 6371;// radius of earth in Km
+        double lat1 = StartP.latitude;
+        double lat2 = EndP.latitude;
+        double lon1 = StartP.longitude;
+        double lon2 = EndP.longitude;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1))
+                * Math.cos(Math.toRadians(lat2)) * Math.sin(dLon / 2)
+                * Math.sin(dLon / 2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        double valueResult = Radius * c;
+        double km = valueResult / 1;
+        DecimalFormat newFormat = new DecimalFormat("####");
+        int kmInDec = Integer.valueOf(newFormat.format(km));
+        double meter = valueResult * 1000;
+        int meterInDec = Integer.valueOf(newFormat.format(meter));
+        Log.d("ddd","" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meter);
+        Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
+                + " Meter   " + meterInDec);
+        TextView textView = (TextView) findViewById(R.id.heart_rate);
+        textView.setText("" + meter);
+        Toast.makeText(this.getBaseContext(), "" + meter, Toast.LENGTH_LONG).show();
+
+//        return Radius * c;
+        return meter;
+    }
+
+
 }
