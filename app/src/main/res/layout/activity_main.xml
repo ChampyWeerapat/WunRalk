@@ -53,122 +53,144 @@
                                 />
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <ScrollView
+                            android:layout_width="wrap_content"
                             android:layout_height="350dp"
-                            android:orientation="vertical"
-                            android:layout_below="@+id/header"
-                            android:layout_marginLeft="50dp"
-                            android:id="@+id/body">
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Duration"
-                                android:textSize="30dp"/>
-                            <TextView
-                                android:id="@+id/time_duration"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="00:00:00:000"
-                                android:textSize="25dp"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Distance"
-                                android:textSize="30dp"
-                                />
-                            <TextView
-                                android:id="@+id/distance"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="0.00"
-                                android:textSize="25dp"/>
+                            android:id="@+id/scrollViewBody" >
+
                             <LinearLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal"
-                                android:layout_marginTop="10dp"
-                                >
+                                android:layout_height="350dp"
+                                android:orientation="vertical"
+                                android:layout_below="@+id/header"
+                                android:layout_marginLeft="50dp"
+                                android:id="@+id/body">
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="Calories"
+                                    android:layout_marginTop="10dp"
+                                    android:text="Duration"
+                                    android:textSize="30dp"/>
+                                <TextView
+                                    android:id="@+id/time_duration"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="00:00:00:000"
+                                    android:textSize="25dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:text="Distance"
                                     android:textSize="30dp"
                                     />
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:id="@+id/distance"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="50dp"
-                                    android:text="Heart Rate"
+                                    android:text="0.00"
+                                    android:textSize="25dp"/>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal"
+                                    android:layout_marginTop="10dp"
+                                    >
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="Calories"
+                                        android:textSize="30dp"
+                                        />
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="50dp"
+                                        android:text="Heart Rate"
+                                        android:textSize="30dp"
+                                        />
+                                </LinearLayout>
+                                <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="horizontal">
+                                    <TextView
+                                        android:id="@+id/calories"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="50dp"
+                                        android:text="0"
+                                        android:textSize="25dp"
+                                        />
+                                    <TextView
+                                        android:id="@+id/heart_rate"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginLeft="150dp"
+                                        android:text="0"
+                                        android:textSize="25dp"
+                                        />
+                                </LinearLayout>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="Speed"
+                                    android:textSize="30dp"/>
+                                <TextView
+                                    android:id="@+id/speed"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="0.00"
+                                    android:textSize="25dp"/>
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="10dp"
+                                    android:text="Average Speed"
                                     android:textSize="30dp"
                                     />
-                            </LinearLayout>
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="horizontal">
                                 <TextView
-                                    android:id="@+id/calories"
-                                    android:layout_width="wrap_content"
+                                    android:id="@+id/avg_speed"
+                                    android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_marginLeft="50dp"
-                                    android:text="0"
-                                    android:textSize="25dp"
-                                    />
-                                <TextView
-                                    android:id="@+id/heart_rate"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginLeft="150dp"
-                                    android:text="0"
-                                    android:textSize="25dp"
-                                    />
+                                    android:text="0.00"
+                                    android:textSize="25dp"/>
                             </LinearLayout>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Speed"
-                                android:textSize="30dp"/>
-                            <TextView
-                                android:id="@+id/speed"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="0.00"
-                                android:textSize="25dp"/>
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:text="Average Speed"
-                                android:textSize="30dp"
-                                />
-                            <TextView
-                                android:id="@+id/avg_speed"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="0.00"
-                                android:textSize="25dp"/>
-                        </LinearLayout>
+                        </ScrollView>
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:background="@color/colorPrimary"
                             android:id="@+id/actionBtn"
-                            android:orientation="vertical"
+                            android:orientation="horizontal"
                             android:layout_alignParentStart="true">
 
-                            <ImageButton
-                                android:id="@+id/startstopbtn"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
-                                android:layout_marginTop="10dp"
-                                android:layout_gravity="center"
-                                android:background="@drawable/start"
-                                />
+                                <ImageButton
+                                    android:layout_width="165dp"
+                                    android:layout_height="50dp"
+                                    android:background="@android:color/transparent"
+                                    />
+
+                                <ImageButton
+                                    android:id="@+id/startbtn"
+                                    android:layout_width="50dp"
+                                    android:layout_height="50dp"
+                                    android:layout_gravity="center"
+                                    android:background="@drawable/start"
+                                    />
+
+                                <ImageButton
+                                    android:id="@+id/stopbtn"
+                                    android:layout_width="170dp"
+                                    android:layout_height="50dp"
+                                    android:layout_marginTop="10dp"
+                                    android:layout_marginLeft="15dp"
+                                    android:background="@android:color/transparent"
+                                    />
+
                         </LinearLayout>
+
                     </LinearLayout>
 
                     <LinearLayout

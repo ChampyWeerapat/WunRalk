@@ -18,13 +18,11 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Timer;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -36,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<Polyline> lists;
     private int count = 0;
     private double lastTime =0;
+    private boolean alreadyStart = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,20 +63,30 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         list = new ArrayList<LatLng>();
 
-        final ImageButton clickHereBtn = (ImageButton)findViewById(R.id.startstopbtn);
-        clickHereBtn.setOnClickListener(new View.OnClickListener() {
+        final ImageButton startBtn = (ImageButton)findViewById(R.id.startbtn);
+        final ImageButton stopBtn = (ImageButton)findViewById(R.id.stopbtn);
+        startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                startActivity(new Intent(getApplicationContext(),activity_loging.class));
-                clickHereBtn.setSelected(!clickHereBtn.isSelected());
-                if (clickHereBtn.isSelected()) {
+                startBtn.setSelected(!startBtn.isSelected());
+                if (startBtn.isSelected()) {
                     runtime.start();
-                    clickHereBtn.setBackgroundResource(R.drawable.stop);
+                    startBtn.setBackgroundResource(R.drawable.pause);
+                    alreadyStart = true;
+                    stopBtn.setImageResource(R.drawable.stop);
 
                 } else {
                     runtime.pause();
-                    clickHereBtn.setBackgroundResource(R.drawable.start);
+                    startBtn.setBackgroundResource(R.drawable.start);
                 }
+            }
+        });
+
+        stopBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Hello World", Toast.LENGTH_SHORT).show();
             }
         });
     }
