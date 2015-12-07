@@ -4,4 +4,7 @@
     <color name="colorPrimaryDark">#69F0AE</color>
     <color name="colorAccent">#FF4081</color>
     <color name="colorHeader">#80000000</color>
+    <color name="colorHeaderAct">#A9A9A9</color>
+    <color name="colorBg">#EEEEEE</color>
+    <color name="colorBgBodyWorkOut">#FFFFFF</color>
 </resources>

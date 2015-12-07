@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         final ImageButton startBtn = (ImageButton)findViewById(R.id.startbtn);
         final ImageButton stopBtn = (ImageButton)findViewById(R.id.stopbtn);
+        stopBtn.setEnabled(false);
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,11 +75,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     runtime.start();
                     startBtn.setBackgroundResource(R.drawable.pause);
                     alreadyStart = true;
-                    stopBtn.setImageResource(R.drawable.stop);
 
                 } else {
                     runtime.pause();
                     startBtn.setBackgroundResource(R.drawable.start);
+                    stopBtn.setImageResource(R.drawable.stop);
+                    stopBtn.setEnabled(true);
+                    alreadyStart = false;
                 }
             }
         });
