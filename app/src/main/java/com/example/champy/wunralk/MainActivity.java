@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView tSpeed,tCal,tAvg,tvHeart_rate,tvDistance;
     private ImageButton btStop,startBtn;
     private double sumDistance=0;
+    private double calories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 //        Log.d("ddd",""+resultSet.moveToFirst());
 //        String username = resultSet.getString(0);
 //        tAvg.setText(""+username);
-
 
         //set TabHost
         tabHost.setup();
@@ -123,23 +123,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         btStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Date time = Calendar.getInstance().getTime();
-                int year = time.getYear();
-                int month = time.getMonth();
-                int day = time.getDate();
-                int hour = time.getHours();
-                int minute = time.getMinutes();
-                int second = time.getSeconds();
-                Toast.makeText(getApplicationContext(), "Hello World " , Toast.LENGTH_SHORT).show();
-//                db.addEvent(activity_loging.getUsername(), String.format("%s-%s-%s %s:%s:%s",year,month,day,hour,minute,second), "KU", );
-                sumDistance = 0;
-                list.clear();
-                lastTime=0;
-                count=0;
-                runtime.reset();
-                tCal.setText("0.0");
-                tSpeed.setText("0.0");
-                tvDistance.setText("0.0");
+            onClickStop();
                 
             }
         });
@@ -150,52 +134,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
-
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
-                if (count == 0) {
-                    count = 1;
-                } else {
-                    double longitude = mMap.getMyLocation().getLongitude();
-                    double latitude = mMap.getMyLocation().getLatitude();
-                    LatLng sydney = new LatLng(latitude, longitude);
-                    PolylineOptions a = new PolylineOptions();
-
-                    if (list.size() == 0) {
-                        list.add(sydney);
-                        a.add(list.get(0));
-                        mMap.addPolyline(a);
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
-                    } else {
-                        double distance = CalculationByDistance(list.get(list.size() - 1), sydney);
-                        String textTime = runtime.getTime();
-                        String[] arr = textTime.split(":");
-                        double house = Double.parseDouble(arr[0]);
-                        double minute = Double.parseDouble(arr[1]);
-                        double second = Double.parseDouble(arr[2]);
-                        double time = house*60*60+minute*60+second;
-                        double speed = distance/(time-lastTime);
-                        tSpeed.setText(String.format("%.2f",speed));
-                        if (distance >= 5 && distance <= 100) {
-                            sumDistance += distance;
-                            tvDistance.setText(String.format("%.2f m", sumDistance));
-                            list.add(sydney);
-                            a.add(list.get(list.size() - 2));
-                            a.add(list.get(list.size() - 1));
-                            mMap.addPolyline(a);
-                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
-                            double caro = 160*0.63*(sumDistance/1000*0.62);
-                            tCal.setText(String.format("%.2f",caro));
-//                            tvHeart_rate.setText("YES");
-                            lastTime = time;
-                        } else {
-//                            tvHeart_rate.setText("NO");
-                            lastTime = time;
-
-                        }
-                    }
-                }
+                onMapChange();
             }
         });
 
@@ -241,9 +183,93 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 + " Meter   " + meter);
         Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
                 + " Meter   " + meterInDec);
-//        Toast.makeText(this.getBaseContext(), "" + meter, Toast.LENGTH_LONG).show();
         return meter;
     }
 
+    public void onMapChange(){
+        if (count == 0) {
+            count = 1;
+        } else {
+            double longitude = mMap.getMyLocation().getLongitude();
+            double latitude = mMap.getMyLocation().getLatitude();
+            LatLng sydney = new LatLng(latitude, longitude);
+            PolylineOptions a = new PolylineOptions();
 
+            if (list.size() == 0) {
+                list.add(sydney);
+                a.add(list.get(0));
+                mMap.addPolyline(a);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
+            } else {
+                double distance = CalculationByDistance(list.get(list.size() - 1), sydney);
+                double time = getTime();
+                double speed = distance/(time-lastTime);
+                tSpeed.setText(String.format("%.2f",speed));
+                if (distance >= 5 && distance <= 100) {
+                    sumDistance += distance;
+                    tvDistance.setText(String.format("%.2f m", sumDistance));
+                    list.add(sydney);
+                    a.add(list.get(list.size() - 2));
+                    a.add(list.get(list.size() - 1));
+                    mMap.addPolyline(a);
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
+                    calories = 160*0.63*(sumDistance/1000*0.62);
+                    tCal.setText(String.format("%.2f",calories));
+//                            tvHeart_rate.setText("YES");
+                    lastTime = time;
+                } else {
+//                            tvHeart_rate.setText("NO");
+                    lastTime = time;
+
+                }
+            }
+        }
+    }
+
+    public double getTime(){
+        String textTime = runtime.getTime();
+        String[] arr = textTime.split(":");
+        double house = Double.parseDouble(arr[0]);
+        double minute = Double.parseDouble(arr[1]);
+        double second = Double.parseDouble(arr[2]);
+        double time = house*60*60+minute*60+second;
+        return  time;
+    }
+
+    public String getStrDateNow(){
+        Date time = Calendar.getInstance().getTime();
+        int year = time.getYear()+1900;
+        int month = time.getMonth();
+        int day = time.getDate();
+        int hour = time.getHours();
+        int minute = time.getMinutes();
+        int second = time.getSeconds();
+        return String.format("%s-%s-%s %s:%s:%s",year,month,day,hour,minute,second);
+    }
+
+    public void onClickStop(){
+//        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
+        Log.d("ddd", activity_loging.getUsername());
+        Log.d("ddd", getStrDateNow());
+        Log.d("ddd", sumDistance + "");
+        Log.d("ddd", runtime.getTime().substring(0, 8));
+        Log.d("ddd", calories+"");
+        db.addEvent(activity_loging.getUsername(), getStrDateNow(), "KU", sumDistance, runtime.getTime().substring(0, 8), calories);
+        try {
+            int a = db.readDB("history").size();
+
+            Toast.makeText(getApplicationContext(), "history "+a , Toast.LENGTH_SHORT).show();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        sumDistance = 0;
+        list.clear();
+        lastTime=0;
+        count=0;
+        runtime.reset();
+        tCal.setText("0.0");
+        tSpeed.setText("0.0");
+        tvDistance.setText("0.0");
+        calories = 0;
+    }
 }

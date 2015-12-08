@@ -93,6 +93,9 @@ public class ManageDB extends AppCompatActivity {
 	public void addEvent(String username, String date, String place, double distanc, String time, double calories){
 //		mydatabase.execSQL(String.format("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);",username,date,place,distanc,time,calories));
 //		createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
-		mydatabase.execSQL(String.format("INSERT INTO history VALUES('%s','%s','%s',%d,'%s',%d);",username,date,place,distanc,time,calories));
+		mydatabase.execSQL(String.format("INSERT INTO history VALUES('%s','%s','%s',%f,'%s',%f);", username, date, place, distanc, time, calories));
+		Cursor a = mydatabase.rawQuery("Select * from member where 1",null);
+
+		Log.d("ddd","insert yes"+ a.getCount());
 	}
 }

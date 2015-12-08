@@ -41,6 +41,7 @@ public class activity_loging extends AppCompatActivity {
         db.createTable("member", "Username VARCHAR,Password VARCHAR");
         db.addMember("wunralker", "admin");
         db.addMember("admin", "admin");
+        db.addMember("", "");
 
         tvUser = (EditText) findViewById(R.id.username);
         tvPass = (EditText) findViewById(R.id.password);
