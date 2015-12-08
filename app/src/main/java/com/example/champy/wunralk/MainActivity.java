@@ -1,5 +1,7 @@
 package com.example.champy.wunralk;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.content.Context;
 import android.location.Criteria;
 import android.location.Location;
@@ -21,6 +23,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -35,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int count = 0;
     private double lastTime =0;
     private boolean alreadyStart = false;
+    private ManageDB db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         TextView duration = (TextView) findViewById(R.id.time_duration);
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
+
+        SQLiteDatabase mydatabase = openOrCreateDatabase("wunralk",MODE_PRIVATE,null);
+        try {
+            db = ManageDB.getInstance(mydatabase);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+//        db.createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
+
+//        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS member(Username VARCHAR,Password VARCHAR);");
+//        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
+
+        Cursor resultSet = mydatabase.rawQuery("Select * from history", null);
+        resultSet.moveToFirst();
+        String username = resultSet.getString(3);
+        TextView avg = (TextView) findViewById(R.id.avg_speed);
+        avg.setText(""+username);
+
 
         //set TabHost
         tabHost.setup();
@@ -128,9 +150,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double second = Double.parseDouble(arr[2]);
                         double miliSecond = Double.parseDouble(arr[3]);
                         double time = house*60*60+minute*60+second;
-                        double speed = distance/time-lastTime;
+                        double speed = distance/(time-lastTime);
                         TextView tSpeed = (TextView) findViewById(R.id.speed);
                         tSpeed.setText(""+speed);
+                        TextView tCal = (TextView) findViewById(R.id.calories);
+                        tCal.setText(""+time);
                         if (distance >= 5 && distance <= 100) {
                             list.add(sydney);
                             a.add(list.get(list.size() - 2));
