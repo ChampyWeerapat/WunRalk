@@ -38,8 +38,10 @@ public class activity_loging extends AppCompatActivity {
             e.printStackTrace();
         }
         db.createTable("history", "username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
-        db.createTable("member","Username VARCHAR,Password VARCHAR");
+        db.createTable("member", "Username VARCHAR,Password VARCHAR");
         db.addMember("wunralker", "admin");
+        db.addMember("admin", "admin");
+
         tvUser = (EditText) findViewById(R.id.username);
         tvPass = (EditText) findViewById(R.id.password);
 

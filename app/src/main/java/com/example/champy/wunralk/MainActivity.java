@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView duration = (TextView) findViewById(R.id.time_duration);
+        final TextView duration = (TextView) findViewById(R.id.time_duration);
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 
         tSpeed = (TextView) findViewById(R.id.speed);
@@ -69,12 +69,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         db.createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
 
 //        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS member(Username VARCHAR,Password VARCHAR);");
-//        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
+        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
 
-        Cursor resultSet = mydatabase.rawQuery("Select * from history", null);
-        Log.d("ddd",""+resultSet.moveToFirst());
-        String username = resultSet.getString(0);
-        tAvg.setText(""+username);
+//        Cursor resultSet = mydatabase.rawQuery("Select * from history", null);
+//        Log.d("ddd",""+resultSet.moveToFirst());
+//        String username = resultSet.getString(0);
+//        tAvg.setText(""+username);
 
 
         //set TabHost
@@ -132,6 +132,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 int second = time.getSeconds();
                 Toast.makeText(getApplicationContext(), "Hello World " , Toast.LENGTH_SHORT).show();
 //                db.addEvent(activity_loging.getUsername(), String.format("%s-%s-%s %s:%s:%s",year,month,day,hour,minute,second), "KU", );
+                sumDistance = 0;
+                list.clear();
+                lastTime=0;
+                count=0;
+                runtime.reset();
+                tCal.setText("0.0");
+                tSpeed.setText("0.0");
+                tvDistance.setText("0.0");
+                
             }
         });
     }
@@ -167,21 +176,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         double second = Double.parseDouble(arr[2]);
                         double time = house*60*60+minute*60+second;
                         double speed = distance/(time-lastTime);
-                        tSpeed.setText(""+speed);
+                        tSpeed.setText(String.format("%.2f",speed));
                         if (distance >= 5 && distance <= 100) {
                             sumDistance += distance;
-                            tvDistance.setText(String.format("%.2d m", sumDistance));
+                            tvDistance.setText(String.format("%.2f m", sumDistance));
                             list.add(sydney);
                             a.add(list.get(list.size() - 2));
                             a.add(list.get(list.size() - 1));
                             mMap.addPolyline(a);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
                             double caro = 160*0.63*(sumDistance/1000*0.62);
-                            tCal.setText(""+caro);
-                            tvHeart_rate.setText("YES");
+                            tCal.setText(String.format("%.2f",caro));
+//                            tvHeart_rate.setText("YES");
                             lastTime = time;
                         } else {
-                            tvHeart_rate.setText("NO");
+//                            tvHeart_rate.setText("NO");
                             lastTime = time;
 
                         }
@@ -232,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 + " Meter   " + meter);
         Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
                 + " Meter   " + meterInDec);
-        Toast.makeText(this.getBaseContext(), "" + meter, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this.getBaseContext(), "" + meter, Toast.LENGTH_LONG).show();
         return meter;
     }
 

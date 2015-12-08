@@ -51,6 +51,13 @@ public class Runtime implements Runnable {
         int hours = minutes/60;
         return (String.format("%02d:%02d:%02d:%03d",hours,minutes,seconds,milliseconds));
     }
+    public void reset(){
+        timeMilli = 0L;
+        timeStart = 0L;
+        finaltime = 0L;
+        timeSwap = 0L;
+        text.setText(String.format("%02d:%02d:%02d:%03d",0,0,0,0));
+    }
 
     public long getAllSecond(){
         return finaltime;
