@@ -26,6 +26,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -39,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private double lastTime =0;
     private boolean alreadyStart = false;
     private ManageDB db;
+    private TextView tSpeed,tCal,tAvg,tvHeart_rate,tvDistance;
+    private ImageButton btStop,startBtn;
+    private double sumDistance=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,22 +52,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView duration = (TextView) findViewById(R.id.time_duration);
         TabHost tabHost = (TabHost) findViewById(R.id.tabHost);
 
+        tSpeed = (TextView) findViewById(R.id.speed);
+        tCal = (TextView) findViewById(R.id.calories);
+        tAvg = (TextView) findViewById(R.id.avg_speed);
+        tvDistance = (TextView) findViewById(R.id.distance);
+        btStop = (ImageButton) findViewById(R.id.stopbtn);
+        startBtn = (ImageButton)findViewById(R.id.startbtn);
+        tvHeart_rate = (TextView) findViewById(R.id.heart_rate);
+
         SQLiteDatabase mydatabase = openOrCreateDatabase("wunralk",MODE_PRIVATE,null);
         try {
             db = ManageDB.getInstance(mydatabase);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-//        db.createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
+        db.createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
 
 //        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS member(Username VARCHAR,Password VARCHAR);");
 //        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
 
         Cursor resultSet = mydatabase.rawQuery("Select * from history", null);
-        resultSet.moveToFirst();
-        String username = resultSet.getString(3);
-        TextView avg = (TextView) findViewById(R.id.avg_speed);
-        avg.setText(""+username);
+        Log.d("ddd",""+resultSet.moveToFirst());
+        String username = resultSet.getString(0);
+        tAvg.setText(""+username);
 
 
         //set TabHost
@@ -85,9 +97,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         list = new ArrayList<LatLng>();
 
-        final ImageButton startBtn = (ImageButton)findViewById(R.id.startbtn);
-        final ImageButton stopBtn = (ImageButton)findViewById(R.id.stopbtn);
-        stopBtn.setEnabled(false);
+        startBtn = (ImageButton)findViewById(R.id.startbtn);
+        btStop = (ImageButton)findViewById(R.id.stopbtn);
+        btStop.setEnabled(false);
         startBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,17 +113,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     runtime.pause();
                     startBtn.setBackgroundResource(R.drawable.start);
-                    stopBtn.setImageResource(R.drawable.stop);
-                    stopBtn.setEnabled(true);
+                    btStop.setImageResource(R.drawable.stop);
+                    btStop.setEnabled(true);
                     alreadyStart = false;
                 }
             }
         });
 
-        stopBtn.setOnClickListener(new View.OnClickListener() {
+        btStop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Hello World", Toast.LENGTH_SHORT).show();
+                Date time = Calendar.getInstance().getTime();
+                int year = time.getYear();
+                int month = time.getMonth();
+                int day = time.getDate();
+                int hour = time.getHours();
+                int minute = time.getMinutes();
+                int second = time.getSeconds();
+                Toast.makeText(getApplicationContext(), "Hello World " , Toast.LENGTH_SHORT).show();
+//                db.addEvent(activity_loging.getUsername(), String.format("%s-%s-%s %s:%s:%s",year,month,day,hour,minute,second), "KU", );
             }
         });
     }
@@ -121,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
         mMap.setMyLocationEnabled(true);
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
+
         mMap.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() {
             @Override
             public void onMyLocationChange(Location location) {
@@ -129,10 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 } else {
                     double longitude = mMap.getMyLocation().getLongitude();
                     double latitude = mMap.getMyLocation().getLatitude();
-//               LatLng sydney = new LatLng(latitude, longitude);
-//               LatLng sydney = mMap.getCameraPosition().target;
                     LatLng sydney = new LatLng(latitude, longitude);
-//                mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
                     PolylineOptions a = new PolylineOptions();
 
                     if (list.size() == 0) {
@@ -141,47 +159,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         mMap.addPolyline(a);
                         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
                     } else {
-
                         double distance = CalculationByDistance(list.get(list.size() - 1), sydney);
                         String textTime = runtime.getTime();
                         String[] arr = textTime.split(":");
                         double house = Double.parseDouble(arr[0]);
                         double minute = Double.parseDouble(arr[1]);
                         double second = Double.parseDouble(arr[2]);
-                        double miliSecond = Double.parseDouble(arr[3]);
                         double time = house*60*60+minute*60+second;
                         double speed = distance/(time-lastTime);
-                        TextView tSpeed = (TextView) findViewById(R.id.speed);
                         tSpeed.setText(""+speed);
-                        TextView tCal = (TextView) findViewById(R.id.calories);
-                        tCal.setText(""+time);
                         if (distance >= 5 && distance <= 100) {
+                            sumDistance += distance;
+                            tvDistance.setText(String.format("%.2d m", sumDistance));
                             list.add(sydney);
                             a.add(list.get(list.size() - 2));
                             a.add(list.get(list.size() - 1));
                             mMap.addPolyline(a);
                             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 17.0f));
-
-                            TextView textView = (TextView) findViewById(R.id.heart_rate);
-                            textView.setText("YES");
-
+                            double caro = 160*0.63*(sumDistance/1000*0.62);
+                            tCal.setText(""+caro);
+                            tvHeart_rate.setText("YES");
                             lastTime = time;
                         } else {
-                            TextView textView = (TextView) findViewById(R.id.heart_rate);
-                            textView.setText("NO");
+                            tvHeart_rate.setText("NO");
                             lastTime = time;
 
                         }
                     }
-
-
                 }
             }
         });
 
-        // Add a marker in Sydney and move the camera
         lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//        Location location = mMap.getMyLocation();
         Criteria criteria = new Criteria();
         String provider = lm.getBestProvider(criteria, false);
         Location location = lm.getLastKnownLocation(provider);
@@ -191,7 +200,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             double longitude = location.getLongitude();
             double latitude = location.getLatitude();
             LatLng sydney = new LatLng(latitude, longitude);
-//            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,17.0f));
             Log.d("ddd", "longitude is "+longitude);
             Log.d("ddd","latitude is "+latitude);
@@ -220,15 +228,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int kmInDec = Integer.valueOf(newFormat.format(km));
         double meter = valueResult * 1000;
         int meterInDec = Integer.valueOf(newFormat.format(meter));
-        Log.d("ddd","" + valueResult + "   KM  " + kmInDec
+        Log.d("ddd", "" + valueResult + "   KM  " + kmInDec
                 + " Meter   " + meter);
         Log.i("Radius Value", "" + valueResult + "   KM  " + kmInDec
                 + " Meter   " + meterInDec);
-        TextView textView = (TextView) findViewById(R.id.heart_rate);
-        textView.setText("" + meter);
         Toast.makeText(this.getBaseContext(), "" + meter, Toast.LENGTH_LONG).show();
-
-//        return Radius * c;
         return meter;
     }
 

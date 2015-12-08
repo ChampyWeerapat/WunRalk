@@ -3,6 +3,7 @@ package com.example.champy.wunralk;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -29,8 +30,10 @@ public class ManageDB extends AppCompatActivity {
 	public ArrayList<ArrayList<String>> readDB(String nameTable) throws SQLException{
 		ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
 		Cursor resultSet = mydatabase.rawQuery("Select * from member",null);
-		resultSet.moveToFirst();
-		while(resultSet.moveToNext()){
+		if (! resultSet.moveToFirst()){
+			return tmp;
+		}
+		do {
 			ArrayList<String> tmpIn = new ArrayList<String>();
 			int i = 0;
 			while(i < resultSet.getColumnCount()){
@@ -38,7 +41,7 @@ public class ManageDB extends AppCompatActivity {
 				i++;
 			}
 			tmp.add(tmpIn);
-		}
+		}while(resultSet.moveToNext());
 		return tmp;
 	}
 	
@@ -58,10 +61,14 @@ public class ManageDB extends AppCompatActivity {
 	}
 	
 	public void updated(String nameTable, String set, String where){
-		mydatabase.execSQL(String.format("UPDATE %s SET %s WHERE %s", nameTable,set, where));
+		mydatabase.execSQL(String.format("UPDATE %s SET %s WHERE %s", nameTable, set, where));
 	}
 
 	public void addMember(String username, String password){
+		Cursor resultSet = mydatabase.rawQuery(String.format("Select * from member where username='%s'",username),null);
+		if (resultSet.getCount()>=1){
+			return;
+		}
 		insertDB("member", new String[]{username, password});
 	}
 
@@ -70,7 +77,13 @@ public class ManageDB extends AppCompatActivity {
 	}
 
 	public boolean login(String username, String password){
-		Cursor resultSet = mydatabase.rawQuery(String.format("Select * from member where username='%s' AND password='%s'",username,password),null);
+		Cursor resultSet;
+		if (mydatabase==null){
+			Log.d("ddd","databse null");
+		}else{
+			Log.d("ddd","databse assigned");
+		}
+		resultSet = mydatabase.rawQuery(String.format("Select * from member where username='%s' AND password='%s'",username,password),null);
 		if (resultSet.getCount()>=1){
 			return true;
 		}
