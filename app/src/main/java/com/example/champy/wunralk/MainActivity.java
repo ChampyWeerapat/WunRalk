@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         tvDistance = (TextView) findViewById(R.id.distance);
         btStop = (ImageButton) findViewById(R.id.stopbtn);
         startBtn = (ImageButton)findViewById(R.id.startbtn);
-        tvHeart_rate = (TextView) findViewById(R.id.heart_rate);
+//        tvHeart_rate = (TextView) findViewById(R.id.heart_rate);
 
         SQLiteDatabase mydatabase = openOrCreateDatabase("wunralk",MODE_PRIVATE,null);
         try {
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         db.createTable("history","username varchar(16),dateTime datetime,place varchar(50),distance double,time time,calories double");
 
 //        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS member(Username VARCHAR,Password VARCHAR);");
-        mydatabase.execSQL("INSERT INTO history VALUES('wunralker','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
+        mydatabase.execSQL("INSERT INTO history VALUES('wunralker1','2558-12-8 18:00:00','ku',4.5,'0:21:30',200);");
 
 //        Cursor resultSet = mydatabase.rawQuery("Select * from history", null);
 //        Log.d("ddd",""+resultSet.moveToFirst());
